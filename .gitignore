@@ -1,0 +1,57 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+.venv/
+env/
+venv/
+venv.bak/
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+
+# FastAPI/Uvicorn logs
+*.log
+
+# Env files
+.env
+.env.*
+
+# Docker-related
+docker-compose.override.yml
+
+# MacOS
+.DS_Store
+
+# Pipenv
+Pipfile.lock
+
+# mypy
+.mypy_cache/
+
+# Temporary files
+tmp/
+*.tmp
+*.swp
