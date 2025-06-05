@@ -1,1 +1,23 @@
- 
+version: '3.8'
+
+services:
+  hn-scraper-api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 3000 --reload
+    
+  # Service for running tests
+  test:
+    build: .
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+    command: pytest -v
+    profiles:
+      - test 
