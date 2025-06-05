@@ -9,7 +9,6 @@ async def test_fetch_page_returns_30_items_and_correct_shape():
     items = await fetch_page(1)
     assert isinstance(items, list)
     assert len(items) == 30
-
     first = items[0]
     assert "title" in first and isinstance(first["title"], str)
     assert "url" in first and isinstance(first["url"], str)
