@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException
 import asyncio
 
 from app.scraper import fetch_page
+from app.cache import get_missing_pages, get_page, store_page
 
 app = FastAPI()
 
@@ -15,21 +16,29 @@ async def read_pages(number: int = 1):
     if number < 1:
         raise HTTPException(status_code=400, detail="Parameter must be ≥ 1")
 
-    # Prepare one coroutine per page (1..number)
-    coros = [fetch_page(i) for i in range(1, number + 1)]
+    # Determine which pages (1..number) need fetching
+    pages = list(range(1, number + 1))
+    missing = get_missing_pages(pages)
+
     try:
-        # Run them concurrently
-        results = await asyncio.gather(*coros)
+        # Fetch all missing pages concurrently
+        tasks = [fetch_page(p) for p in missing]
+        results = await asyncio.gather(*tasks)
+        # Store each fetched page in cache
+        for page_num, items in zip(missing, results):
+            store_page(page_num, items)
     except ValueError:
-        # If fetch_page raises ValueError for invalid input
+        # Handle invalid page_number passed to fetch_page
         raise HTTPException(status_code=400, detail="Invalid page number")
     except Exception:
-        # Catch all other errors (network, parsing, etc.)
+        # Any other error (network, parsing, etc.)
         raise HTTPException(status_code=500, detail="Failed to fetch data from HN")
 
-    # Flatten the list of page‐results into a single list of items
+    # Assemble results from cache in order
     all_items: list[dict] = []
-    for page_items in results:
-        all_items.extend(page_items)
+    for p in pages:
+        page_items = get_page(p)
+        if page_items:
+            all_items.extend(page_items)
 
     return all_items
