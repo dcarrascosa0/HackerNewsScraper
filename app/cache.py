@@ -1,34 +1,36 @@
- # app/cache.py
+# app/cache.py
 
 _page_store: dict[int, list[dict]] = {}
 _cached_pages: set[int] = set()
 
 def get_missing_pages(pages: list[int]) -> list[int]:
     """
-    Return subset of `pages` not yet in cache.
+    Return the subset of `pages` that are not yet cached.
     """
-    raise NotImplementedError("get_missing_pages not implemented")
+    return [p for p in pages if p not in _cached_pages]
 
 def get_page(page_number: int) -> list[dict] | None:
     """
-    Return cached items for page_number, or None.
+    Return cached items for `page_number`, or None if not cached.
     """
-    raise NotImplementedError("get_page not implemented")
+    return _page_store.get(page_number)
 
 def store_page(page_number: int, items: list[dict]) -> None:
     """
-    Store `items` under page_number and mark as cached.
+    Store `items` under `page_number` and mark that page as cached.
     """
-    raise NotImplementedError("store_page not implemented")
+    _page_store[page_number] = items
+    _cached_pages.add(page_number)
 
 def clear_cache() -> None:
     """
-    Clear entire in-memory cache.
+    Clear the entire in‐memory cache (used in tests or on restart).
     """
-    raise NotImplementedError("clear_cache not implemented")
+    _page_store.clear()
+    _cached_pages.clear()
 
 def get_cached_pages() -> list[int]:
     """
-    Return sorted list of cached page numbers.
+    Return a sorted list of currently cached page numbers.
     """
-    raise NotImplementedError("get_cached_pages not implemented")
+    return sorted(_cached_pages)
